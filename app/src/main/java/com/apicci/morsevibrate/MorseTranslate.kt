@@ -1,17 +1,21 @@
 package com.apicci.morsevibrate
 
-import android.widget.Toast
-
 class MorseTranslate() {
-
-    private lateinit var outputString: String;
-
     companion object {
-        public fun TextToMorse(inputString: String): String {
+
+        //Space between symbols handled in MainService.kt
+        val SPACE_BETWEEN_LETTERS_SYMBOL = "l"
+        val SPACE_BETWEEN_WORDS_SYMBOL = "s"
+
+        public fun TextToMorse(inputString: String?): String? {
+            if(inputString == null){
+                return null;
+            }
+
             var builder: StringBuilder = StringBuilder()
             for(i in inputString.indices){
-                var output: String = when(inputString[i].toLowerCase()){
-                    ' ' -> "s"
+                var output: String = when(inputString.get(i).toLowerCase()){
+                    ' ' -> SPACE_BETWEEN_WORDS_SYMBOL
                     'a' -> ".-"
                     'b' -> "-..."
                     'c' -> "-.-."
@@ -51,6 +55,7 @@ class MorseTranslate() {
                     else -> "n"
                 }
                 builder.append(output)
+                builder.append(SPACE_BETWEEN_LETTERS_SYMBOL)
             }
 
             return builder.toString()
