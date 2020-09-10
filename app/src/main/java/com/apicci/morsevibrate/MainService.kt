@@ -42,7 +42,6 @@ class MainService() : NotificationListenerService() {
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
         super.onNotificationRemoved(sbn)
-        println("------------------Notification Deleted")
 
     }
 
