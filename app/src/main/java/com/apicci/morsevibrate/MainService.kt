@@ -11,7 +11,7 @@ import android.widget.Toast
 class MainService : NotificationListenerService() {
 
     override fun onBind(intent: Intent): IBinder? {
-        return null
+        return super.onBind(intent)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -24,11 +24,15 @@ class MainService : NotificationListenerService() {
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
-        super.onNotificationPosted(sbn)
         Toast.makeText(applicationContext, "Notification Detected", Toast.LENGTH_SHORT).show()
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
         super.onNotificationRemoved(sbn)
+
+    }
+
+    override fun onListenerConnected() {
+        super.onListenerConnected()
     }
 }

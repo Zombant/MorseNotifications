@@ -3,6 +3,7 @@ package com.apicci.morsevibrate
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.service.notification.NotificationListenerService
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
@@ -15,9 +16,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         startServiceButton.setOnClickListener(View.OnClickListener {
-            Toast.makeText(applicationContext, "Test", Toast.LENGTH_SHORT).show();
-            startService(Intent(this, MainService::class.java));
+            startService(Intent(applicationContext, MainService::class.java))
+
         })
+
 
     }
 }
