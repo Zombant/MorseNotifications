@@ -8,42 +8,57 @@ import android.service.notification.StatusBarNotification
 import android.widget.Toast
 import kotlin.reflect.typeOf
 
+//NotificationListenerService turns on automatically if
 class MainService() : NotificationListenerService() {
 
+    //Reference to device vibrator
     private var vibrator: Vibrator? = null
 
+    //Unused
     override fun onBind(intent: Intent): IBinder? {
         return super.onBind(intent)
     }
 
+    //Unused- service always runs
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Toast.makeText(applicationContext, "Service Started", Toast.LENGTH_SHORT).show()
         return START_STICKY
     }
 
+    //Unused- service always runs
     override fun onDestroy() {
         super.onDestroy()
         Toast.makeText(applicationContext, "Service Stopped", Toast.LENGTH_SHORT).show()
     }
 
+    //Runs when a notification appears
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         println("------------------Notification Detected")
+
+        //Make sure the vibrator object is not null
         if(vibrator == null){
-                vibrator = applicationContext.getSystemService(VIBRATOR_SERVICE) as Vibrator
+            //Get phone vibrator
+            vibrator = applicationContext.getSystemService(VIBRATOR_SERVICE) as Vibrator
         }
+
+        //Debugging stuff
         println(sbn?.notification?.extras?.getString("android.title"))
         println(sbn?.notification?.extras?.getString("android.text"))
         println(sbn?.packageName)
         println(Telephony.Sms.getDefaultSmsPackage(applicationContext))
+
+        //Only run if the notification came from the default SMS app
         if(sbn?.packageName == Telephony.Sms.getDefaultSmsPackage(applicationContext)){
+            //Vibrate the message in the text field of the notification
             vibrateMessage(sbn?.notification?.extras?.getString("android.text"))
         }
     }
 
+    //Called when a notification is cleared
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
         super.onNotificationRemoved(sbn)
-
     }
+
 
     private fun vibrateDot(){
         if(Build.VERSION.SDK_INT >= 26) {
@@ -76,13 +91,20 @@ class MainService() : NotificationListenerService() {
         }
     }
 
+    //Vibrates depending on the message given
     private fun vibrateMessage(message: String?){
+
+        //Translate the message into morse code
         var vibrationCode: String? = MorseTranslate.TextToMorse(message)
+
+        //Debugging stuff
         println(message)
         println(vibrationCode)
 
+        //Do not continue if the message is empty
         if(vibrationCode == null){ return }
 
+        //Vibrate depending on the translated message
         for(symbol in vibrationCode.indices){
             println()
             if(vibrationCode[symbol] == '.'){

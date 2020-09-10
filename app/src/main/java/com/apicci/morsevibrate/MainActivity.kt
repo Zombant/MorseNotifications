@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //TODO: Start and stop the service
         startServiceButton.setOnClickListener(View.OnClickListener {
             println("------------------Start Clicked")
         })
@@ -27,10 +28,6 @@ class MainActivity : AppCompatActivity() {
         stopServiceButton.setOnClickListener(View.OnClickListener{
             println("------------------Stop Clicked")
         })
-        //var vibrator: Vibrator = getSystemService(NotificationListenerService.VIBRATOR_SERVICE) as Vibrator
-        /*if(Build.VERSION.SDK_INT >= 26){
-            vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.))
-        }*/
 
     }
 
