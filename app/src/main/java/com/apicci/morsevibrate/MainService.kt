@@ -35,23 +35,29 @@ class MainService() : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         println("------------------Notification Detected")
 
-        //Make sure the vibrator object is not null
-        if(vibrator == null){
-            //Get phone vibrator
-            vibrator = applicationContext.getSystemService(VIBRATOR_SERVICE) as Vibrator
+        if(getSharedPreferences("morseNotify", 0).getBoolean("enabled", false)) {
+
+
+            //Make sure the vibrator object is not null
+            if (vibrator == null) {
+                //Get phone vibrator
+                vibrator = applicationContext.getSystemService(VIBRATOR_SERVICE) as Vibrator
+            }
+
+            //Debugging stuff
+            println(sbn?.notification?.extras?.getString("android.title"))
+            println(sbn?.notification?.extras?.getString("android.text"))
+            println(sbn?.packageName)
+            println(Telephony.Sms.getDefaultSmsPackage(applicationContext))
+
+            //Only run if the notification came from the default SMS app
+            if (sbn?.packageName == Telephony.Sms.getDefaultSmsPackage(applicationContext)) {
+                //Vibrate the message in the text field of the notification
+                vibrateMessage(sbn?.notification?.extras?.getString("android.text"), getSharedPreferences("morseNotify", 0).getInt("speed", -1)
+                )
+            }
         }
 
-        //Debugging stuff
-        println(sbn?.notification?.extras?.getString("android.title"))
-        println(sbn?.notification?.extras?.getString("android.text"))
-        println(sbn?.packageName)
-        println(Telephony.Sms.getDefaultSmsPackage(applicationContext))
-
-        //Only run if the notification came from the default SMS app
-        if(sbn?.packageName == Telephony.Sms.getDefaultSmsPackage(applicationContext)){
-            //Vibrate the message in the text field of the notification
-            vibrateMessage(sbn?.notification?.extras?.getString("android.text"))
-        }
     }
 
     //Called when a notification is cleared
@@ -60,39 +66,37 @@ class MainService() : NotificationListenerService() {
     }
 
 
-    private fun vibrateDot(){
+    private fun vibrateDot(multiplier: Int){
         if(Build.VERSION.SDK_INT >= 26) {
-            //TODO: Make the WPM based on user input
-            vibrator?.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+            vibrator?.vibrate(VibrationEffect.createOneShot(multiplier.toLong() * 1, VibrationEffect.DEFAULT_AMPLITUDE))
             //TODO: or try SystemClock.sleep(mills)
             Thread.sleep(100)
         }
     }
-    private fun vibrateDash(){
+    private fun vibrateDash(multiplier: Int){
         if(Build.VERSION.SDK_INT >= 26) {
-            //TODO: Make the WPM based on user input
-            vibrator?.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE))
-            Thread.sleep(300)
+            vibrator?.vibrate(VibrationEffect.createOneShot(multiplier.toLong() * 3, VibrationEffect.DEFAULT_AMPLITUDE))
+            Thread.sleep(multiplier.toLong() * 3)
         }
     }
-    private fun spaceBetweenSymbols(){
+    private fun spaceBetweenSymbols(multiplier: Int){
         if(Build.VERSION.SDK_INT >= 26) {
-            Thread.sleep(100)
+            Thread.sleep(multiplier.toLong() * 1)
         }
     }
-    private fun spaceBetweenLetters(){
+    private fun spaceBetweenLetters(multiplier: Int){
         if(Build.VERSION.SDK_INT >= 26) {
-            Thread.sleep(300)
+            Thread.sleep(multiplier.toLong() * 3)
         }
     }
-    private fun spaceBetweenWords(){
+    private fun spaceBetweenWords(multiplier: Int){
         if(Build.VERSION.SDK_INT >= 26) {
-            Thread.sleep(700)
+            Thread.sleep(multiplier.toLong() * 7)
         }
     }
 
     //Vibrates depending on the message given
-    private fun vibrateMessage(message: String?){
+    private fun vibrateMessage(message: String?, multiplier: Int){
 
         //Translate the message into morse code
         var vibrationCode: String? = MorseTranslate.TextToMorse(message)
@@ -108,18 +112,18 @@ class MainService() : NotificationListenerService() {
         for(symbol in vibrationCode.indices){
             println()
             if(vibrationCode[symbol] == '.'){
-                vibrateDot()
-                spaceBetweenSymbols()
+                vibrateDot(multiplier)
+                spaceBetweenSymbols(multiplier)
             }
             if(vibrationCode[symbol] == '-'){
-                vibrateDash()
-                spaceBetweenSymbols()
+                vibrateDash(multiplier)
+                spaceBetweenSymbols(multiplier)
             }
             if(vibrationCode[symbol] == 'l'){
-                spaceBetweenLetters()
+                spaceBetweenLetters(multiplier)
             }
             if(vibrationCode[symbol] == 's'){
-                spaceBetweenWords()
+                spaceBetweenWords(multiplier)
             }
         }
     }
