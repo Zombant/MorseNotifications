@@ -19,11 +19,12 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
+        android:layout_marginBottom="12dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/saveSpeedButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -48,11 +49,11 @@
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="52dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/saveSpeedButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="191dp">
 
         <TextView
             android:id="@+id/speedTextView"
@@ -70,6 +71,63 @@
             android:layout_marginLeft="10dp"
             android:ems="10"
             android:inputType="number" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/maxWordsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:text="Max Words To Play"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/maxWordsEditText"
+            android:layout_width="134dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="number" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/wordLimitTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:text="Set Max Words"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <CheckBox
+            android:id="@+id/maxWordsCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
     </LinearLayout>
 

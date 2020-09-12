@@ -70,7 +70,10 @@ class MorseTranslate() {
                     else -> "n"
                 }
                 builder.append(output)
-                builder.append(SPACE_BETWEEN_LETTERS_SYMBOL)
+                if(inputString.get(i).toLowerCase() != ' ') {
+                    builder.append(SPACE_BETWEEN_LETTERS_SYMBOL)
+
+                }
             }
 
             return builder.toString()

@@ -53,8 +53,7 @@ class MainService() : NotificationListenerService() {
             //Only run if the notification came from the default SMS app
             if (sbn?.packageName == Telephony.Sms.getDefaultSmsPackage(applicationContext)) {
                 //Vibrate the message in the text field of the notification
-                vibrateMessage(sbn?.notification?.extras?.getString("android.text"), getSharedPreferences("morseNotify", 0).getInt("speed", -1)
-                )
+                vibrateMessage(sbn?.notification?.extras?.getString("android.text"), getSharedPreferences("morseNotify", 0).getInt("speed", -1), getSharedPreferences("morseNotify", 0).getInt("maxWords", -1))
             }
         }
 
@@ -96,7 +95,9 @@ class MainService() : NotificationListenerService() {
     }
 
     //Vibrates depending on the message given
-    private fun vibrateMessage(message: String?, multiplier: Int){
+    private fun vibrateMessage(message: String?, multiplier: Int, maxWords: Int){
+
+        if(multiplier == -1){return}
 
         //Translate the message into morse code
         var vibrationCode: String? = MorseTranslate.TextToMorse(message)
@@ -107,6 +108,8 @@ class MainService() : NotificationListenerService() {
 
         //Do not continue if the message is empty
         if(vibrationCode == null){ return }
+
+        var currentWordCount: Int = maxWords
 
         //Vibrate depending on the translated message
         for(symbol in vibrationCode.indices){
@@ -124,7 +127,10 @@ class MainService() : NotificationListenerService() {
             }
             if(vibrationCode[symbol] == 's'){
                 spaceBetweenWords(multiplier)
+                currentWordCount--
             }
+            if(currentWordCount <= 0){ break }
+
         }
     }
 
