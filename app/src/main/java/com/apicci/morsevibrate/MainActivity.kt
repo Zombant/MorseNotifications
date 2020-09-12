@@ -23,7 +23,8 @@ class MainActivity : AppCompatActivity() {
         speedEditText.setText(getSharedPreferences("morseNotify", 0).getInt("speed", 150).toString())
         maxWordsEditText.setText(getSharedPreferences("morseNotify", 0).getInt("maxWords", 100).toString())
         enabledCheckBox.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("enabled", false)
-        maxWordsCheckBox.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("maxWords", false)
+        maxWordsCheckBox.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("maxWordsChecked", false)
+        maxWordsEditText.isEnabled = maxWordsCheckBox.isChecked
 
 
         //TODO: Option to play sound and flash light in addition to vibration
@@ -32,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         maxWordsCheckBox.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener{
             override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-
+                maxWordsEditText.isEnabled = isChecked
             }
 
         })
@@ -41,23 +42,30 @@ class MainActivity : AppCompatActivity() {
             //Set up SharedPreferences
             val editor = getSharedPreferences("morseNotify", 0).edit()
 
-            if(speedEditText.text.toString().length > 5 || speedEditText.text.toString() == ""){
+            if(/*speedEditText.text.toString().length > 5 || */speedEditText.text.toString() == ""){
                 Toast.makeText(applicationContext, "Invalid Speed: Please enter a value $MIN_SPEED-$MAX_SPEED", Toast.LENGTH_LONG).show()
 
-            } else if(speedEditText.text.toString().length > 8 || maxWordsEditText.text.toString() == ""){
+            } else if(maxWordsCheckBox.isChecked && (/*maxWordsEditText.text.toString().length > 8 || */maxWordsEditText.text.toString() == "")){
                 Toast.makeText(applicationContext, "Invalid Value: Please enter a value $MIN_NUMOFWORDS-$MAX_NUMOFWORDS", Toast.LENGTH_LONG).show()
 
             } else if(speedEditText.text.toString().toInt() > MAX_SPEED || speedEditText.text.toString().toInt() < MIN_SPEED){
                 Toast.makeText(applicationContext, "Invalid Speed: Please enter a value $MIN_SPEED-$MAX_SPEED", Toast.LENGTH_LONG).show()
 
-            } else if(maxWordsEditText.text.toString().toInt() > MAX_NUMOFWORDS || maxWordsEditText.text.toString().toInt() < MIN_NUMOFWORDS) {
+            } else if(maxWordsCheckBox.isChecked && (maxWordsEditText.text.toString().toInt() > MAX_NUMOFWORDS || maxWordsEditText.text.toString().toInt() < MIN_NUMOFWORDS)) {
                 Toast.makeText(applicationContext, "Invalid Value: Please enter a value $MIN_NUMOFWORDS-$MAX_NUMOFWORDS", Toast.LENGTH_LONG).show()
 
             } else {
                 //Save speed in SharedPreferences
                 editor.putBoolean("enabled", enabledCheckBox.isChecked)
                 editor.putInt("speed", speedEditText.text.toString().toInt())
-                editor.putInt("maxWords", maxWordsEditText.text.toString().toInt())
+                editor.putBoolean("maxWordsChecked", maxWordsCheckBox.isChecked)
+
+                if(maxWordsCheckBox.isChecked) {
+                    editor.putInt("maxWords", maxWordsEditText.text.toString().toInt())
+                } else {
+                    editor.putInt("maxWords", -1)
+                }
+                println(getSharedPreferences("morseNotify", 0).getBoolean("maxWordsChecked", false))
                 editor.apply()
             }
         }

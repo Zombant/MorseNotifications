@@ -129,8 +129,9 @@ class MainService() : NotificationListenerService() {
                 spaceBetweenWords(multiplier)
                 currentWordCount--
             }
-            if(currentWordCount <= 0){ break }
-
+            if (maxWords != -1 && currentWordCount <= 0) {
+                break
+            }
         }
     }
 
