@@ -2,8 +2,6 @@ package com.apicci.morsevibrate
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.widget.CompoundButton
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,9 +20,13 @@ class MainActivity : AppCompatActivity() {
 
         speedEditText.setText(getSharedPreferences("morseNotify", 0).getInt("speed", 150).toString())
         maxWordsEditText.setText(getSharedPreferences("morseNotify", 0).getInt("maxWords", 100).toString())
+        if(getSharedPreferences("morseNotify", 0).getInt("maxWords", 100) == -1) maxWordsEditText.setText("")
         enabledCheckBox.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("enabled", false)
+        vibrateTitleCheckBox.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("vibrateTitle", false)
+        vibrateAppNameCheckBox.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("vibrateAppName", false)
         maxWordsCheckBox.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("maxWordsChecked", false)
         maxWordsEditText.isEnabled = maxWordsCheckBox.isChecked
+        maxWordsTextView.isEnabled = maxWordsCheckBox.isChecked
 
 
         //TODO: Option to play sound and flash light in addition to vibration
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         maxWordsCheckBox.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener{
             override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
                 maxWordsEditText.isEnabled = isChecked
+                maxWordsTextView.isEnabled = maxWordsCheckBox.isChecked
             }
 
         })
@@ -65,7 +68,10 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     editor.putInt("maxWords", -1)
                 }
-                println(getSharedPreferences("morseNotify", 0).getBoolean("maxWordsChecked", false))
+
+                editor.putBoolean("vibrateTitle", vibrateTitleCheckBox.isChecked)
+                editor.putBoolean("vibrateAppName", vibrateAppNameCheckBox.isChecked)
+
                 editor.apply()
             }
         }

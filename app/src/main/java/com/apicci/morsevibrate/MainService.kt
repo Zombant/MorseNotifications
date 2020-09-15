@@ -1,12 +1,15 @@
 package com.apicci.morsevibrate
 
 import android.content.Intent
-import android.os.*
+import android.os.Build
+import android.os.IBinder
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.provider.Telephony
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import android.widget.Toast
-import kotlin.reflect.typeOf
 
 //NotificationListenerService turns on automatically if
 class MainService() : NotificationListenerService() {
@@ -33,7 +36,7 @@ class MainService() : NotificationListenerService() {
 
     //Runs when a notification appears
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
-        println("------------------Notification Detected")
+        //println("------------------Notification Detected")
 
         if(getSharedPreferences("morseNotify", 0).getBoolean("enabled", false)) {
 
@@ -45,13 +48,24 @@ class MainService() : NotificationListenerService() {
             }
 
             //Debugging stuff
-            println(sbn?.notification?.extras?.getString("android.title"))
-            println(sbn?.notification?.extras?.getString("android.text"))
-            println(sbn?.packageName)
-            println(Telephony.Sms.getDefaultSmsPackage(applicationContext))
+            //println(sbn?.notification?.extras?.getString("android.title"))
+            //println(sbn?.notification?.extras?.getString("android.text"))
+            //println(sbn?.packageName)
+            //println(Telephony.Sms.getDefaultSmsPackage(applicationContext))
+            //for (key in sbn?.notification?.extras?.keySet()!!) {
+            //    Log.d("myApplication", "$key is a key in the bundle")
+            //}
 
             //Only run if the notification came from the default SMS app
             if (sbn?.packageName == Telephony.Sms.getDefaultSmsPackage(applicationContext)) {
+
+                //TODO: Vibrate App Name
+
+                //Vibrate Notification Title: //TODO: will always vibrate entire title
+                if(getSharedPreferences("morseNotify", 0).getBoolean("vibrateTitle", false)) {
+                    vibrateMessage(sbn?.notification?.extras?.getString("android.title"), getSharedPreferences("morseNotify", 0).getInt("speed", -1), -1)
+                    Thread.sleep(300)
+                }
                 //Vibrate the message in the text field of the notification
                 vibrateMessage(sbn?.notification?.extras?.getString("android.text"), getSharedPreferences("morseNotify", 0).getInt("speed", -1), getSharedPreferences("morseNotify", 0).getInt("maxWords", -1))
             }
