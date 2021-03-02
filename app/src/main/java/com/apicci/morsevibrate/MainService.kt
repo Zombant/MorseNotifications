@@ -78,7 +78,7 @@ class MainService() : NotificationListenerService() {
         super.onNotificationRemoved(sbn)
     }
 
-
+    //Vibrate a dot
     private fun vibrateDot(multiplier: Int){
         if(Build.VERSION.SDK_INT >= 26) {
             vibrator?.vibrate(VibrationEffect.createOneShot(multiplier.toLong() * 1, VibrationEffect.DEFAULT_AMPLITUDE))
@@ -86,12 +86,15 @@ class MainService() : NotificationListenerService() {
             Thread.sleep(100)
         }
     }
+    //Vibrate a dash
     private fun vibrateDash(multiplier: Int){
         if(Build.VERSION.SDK_INT >= 26) {
             vibrator?.vibrate(VibrationEffect.createOneShot(multiplier.toLong() * 3, VibrationEffect.DEFAULT_AMPLITUDE))
             Thread.sleep(multiplier.toLong() * 3)
         }
     }
+
+    //Wait between vibrations
     private fun spaceBetweenSymbols(multiplier: Int){
         if(Build.VERSION.SDK_INT >= 26) {
             Thread.sleep(multiplier.toLong() * 1)
