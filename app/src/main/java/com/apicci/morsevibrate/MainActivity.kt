@@ -5,9 +5,11 @@ import android.content.pm.ApplicationInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_main.*
@@ -134,6 +136,10 @@ class MainActivity : AppCompatActivity() {
 
             dialog.arguments = bundle
             dialog.show(supportFragmentManager, "PackageDialog")
+            val displayMetrics = DisplayMetrics()
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+            dialog.dialog?.window?.attributes = WindowManager.LayoutParams(displayMetrics.widthPixels, displayMetrics.heightPixels )
+
         }
 
     }
@@ -173,9 +179,9 @@ class MainActivity : AppCompatActivity() {
             //If the current package is a system package
             if (packages[currentPackage]!!.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
                 val appName = packages[currentPackage].applicationInfo.loadLabel(packageManager).toString()
-                val icon = packages[currentPackage].applicationInfo.icon
+                val appPackage = packages[currentPackage].applicationInfo.packageName
                 val checked = false
-                val item = PackageEntry(appName, icon, checked)
+                val item = PackageEntry(appName, appPackage, checked)
                 data.add(item)
             }
         }
