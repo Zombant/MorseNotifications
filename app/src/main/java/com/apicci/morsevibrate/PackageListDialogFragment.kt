@@ -14,19 +14,26 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.package_list_fragment.view.*
 import kotlin.reflect.typeOf
 
+//DialogFragment where the user can select apps
 class PackageListDialogFragment: DialogFragment() {
 
+    //Returns the view that will be shown
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var rootView: View = inflater.inflate(R.layout.package_list_fragment, container, true)
-        rootView.layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
 
+        //Use the package_list_fragment layout
+        var rootView: View = inflater.inflate(R.layout.package_list_fragment, container, true)
+
+        //Deserialize the data from the bundle that was passed into the DialogFragment
         val data = arguments?.getSerializable("data") as ArrayList<PackageEntry>
-        Log.d("--------", data.toString())
-        for(i in data.indices){
-            Log.d("-------------", data[i].appName)
-        }
+
+        // Set the Adapter of the RecyclerView that is in the root view (R.layout.package_list_fragment)
+        // to the custom Adapter and pass in the data and application context
         rootView.recyclerView.adapter = PackagesAdapter(data, activity?.applicationContext)
+
+        //Set the layout manager of the RecyclerView to a LinearLayoutManager
         rootView.recyclerView.layoutManager = LinearLayoutManager(activity?.applicationContext)
+
+
         rootView.recyclerView.setHasFixedSize(true)
 
         return rootView

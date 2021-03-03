@@ -37,7 +37,7 @@ class PackagesAdapter(private val data: List<PackageEntry>, private val context:
     }
 
     class PackagesViewHolder(rowInstance: View) : RecyclerView.ViewHolder(rowInstance) {
-        val imageView: ImageView = rowInstance.packageIcon
+        val imageView: ImageView = rowInstance.packageIconImageView
         val textView: TextView = rowInstance.packageNameTextView
         val checkBox: CheckBox = rowInstance.packageCheckBox
     }

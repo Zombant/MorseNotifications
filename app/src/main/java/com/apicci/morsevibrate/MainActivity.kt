@@ -5,15 +5,13 @@ import android.content.pm.ApplicationInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.package_list_fragment.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -123,22 +121,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         //Select apps button
-        button.setOnClickListener {
+        chooseAppsButton.setOnClickListener {
+            //Create an instance of the fragment dialog
             val dialog = PackageListDialogFragment()
 
+            //Create an empty bundle
             val bundle = Bundle()
 
+            //Put the package data into the bundle
             val data = getInstalledApps()
-            for(i in data.indices){
-                Log.d("-------------", data[i].appName)
-            }
             bundle.putSerializable("data", data)
 
+            //Put the bundle into the fragment arguments
             dialog.arguments = bundle
+
+            //Show DialogFragment
             dialog.show(supportFragmentManager, "PackageDialog")
-            val displayMetrics = DisplayMetrics()
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
-            dialog.dialog?.window?.attributes = WindowManager.LayoutParams(displayMetrics.widthPixels, displayMetrics.heightPixels )
+
 
         }
 
@@ -169,9 +168,10 @@ class MainActivity : AppCompatActivity() {
         return alertDialogBuilder.create()
     }
 
+    //Returns an ArrayList of installed packages
     private fun getInstalledApps(): ArrayList<PackageEntry> {
         //Create empty list
-        var data = ArrayList<PackageEntry>()
+        val data = ArrayList<PackageEntry>()
 
         //Get a list of all packages
         val packages = packageManager.getInstalledPackages(0)
@@ -180,13 +180,14 @@ class MainActivity : AppCompatActivity() {
             if (packages[currentPackage]!!.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
                 val appName = packages[currentPackage].applicationInfo.loadLabel(packageManager).toString()
                 val appPackage = packages[currentPackage].applicationInfo.packageName
-                val checked = false
+                val checked = false //TODO: Only checked if it is checked in the sharedPreferences
                 val item = PackageEntry(appName, appPackage, checked)
                 data.add(item)
             }
         }
 
-        return data
+        //Return a list of packages, sorted by app names
+        return ArrayList(data.sortedBy { it.appName.capitalize() })
     }
 
 }

@@ -1,5 +1,4 @@
 package com.apicci.morsevibrate
 
-import android.graphics.drawable.Drawable
-
+//Data that is used to show each entry on the apps list
 data class PackageEntry(val appName: String, val appPackage: String, val checked: Boolean)
