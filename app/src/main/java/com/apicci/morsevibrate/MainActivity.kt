@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.package_list_fragment.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,7 +54,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         //Setup
         speedEditText.setText(getSharedPreferences("morseNotify", 0).getInt("speed", 150).toString())
         maxWordsEditText.setText(getSharedPreferences("morseNotify", 0).getInt("maxWords", 100).toString())
@@ -120,6 +120,22 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //Select apps button
+        button.setOnClickListener {
+            val dialog = PackageListDialogFragment()
+
+            val bundle = Bundle()
+
+            val data = getInstalledApps()
+            for(i in data.indices){
+                Log.d("-------------", data[i].appName)
+            }
+            bundle.putSerializable("data", data)
+
+            dialog.arguments = bundle
+            dialog.show(supportFragmentManager, "PackageDialog")
+        }
+
     }
 
     //Returns true if Notification Access in enabled
@@ -147,6 +163,24 @@ class MainActivity : AppCompatActivity() {
         return alertDialogBuilder.create()
     }
 
+    private fun getInstalledApps(): ArrayList<PackageEntry> {
+        //Create empty list
+        var data = ArrayList<PackageEntry>()
 
+        //Get a list of all packages
+        val packages = packageManager.getInstalledPackages(0)
+        for (currentPackage in packages.indices) {
+            //If the current package is a system package
+            if (packages[currentPackage]!!.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
+                val appName = packages[currentPackage].applicationInfo.loadLabel(packageManager).toString()
+                val icon = packages[currentPackage].applicationInfo.icon
+                val checked = false
+                val item = PackageEntry(appName, icon, checked)
+                data.add(item)
+            }
+        }
+
+        return data
+    }
 
 }
