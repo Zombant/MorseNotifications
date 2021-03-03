@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -12,11 +14,26 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    public val MAX_SPEED: Int = 1000
-    public val MIN_SPEED: Int = 35
+    private val MAX_SPEED: Int = 1000
+    private val MIN_SPEED: Int = 35
 
-    public val MAX_NUMOFWORDS: Int = 10000
-    public val MIN_NUMOFWORDS: Int = 1
+    private val MAX_NUMOFWORDS: Int = 10000
+    private val MIN_NUMOFWORDS: Int = 1
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_activity_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        var id = item.itemId
+        if(id == R.id.about_menu_item){
+            val intent = Intent(this, AboutActivity::class.java)
+            startActivity(intent)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
 
     override fun onResume() {
@@ -24,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         //If Access is not granted, alert the user
         if(!getNotificationsEnabled()){
-            var alert = enableNotificationAccessAlert()
+            val alert = enableNotificationAccessAlert()
             alert.show()
             Log.d("-----------------", "SHOWALERT")
         }
@@ -50,13 +67,10 @@ class MainActivity : AppCompatActivity() {
         //TODO: Option to play sound and flash light in addition to vibration
 
         //When the checkbox is toggled
-        maxWordsCheckBox.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener{
-            override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-                maxWordsEditText.isEnabled = isChecked
-                maxWordsTextView.isEnabled = maxWordsCheckBox.isChecked
-            }
-
-        })
+        maxWordsCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            maxWordsEditText.isEnabled = isChecked
+            maxWordsTextView.isEnabled = maxWordsCheckBox.isChecked
+        }
 
         //When the save button is pressed
         saveSpeedButton.setOnClickListener {
@@ -64,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             //Alert the user to enable Notification Access if it is not already, otherwise continue as normal
             if(!getNotificationsEnabled()){
                 //Show alert dialog that directs user to settings
-                var alertDialog = enableNotificationAccessAlert()
+                val alertDialog = enableNotificationAccessAlert()
                 alertDialog.show()
 
             } else {
@@ -107,9 +121,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     //Returns true if Notification Access in enabled
-    fun getNotificationsEnabled(): Boolean{
+    private fun getNotificationsEnabled(): Boolean{
         //Get String of all enabled notification listeners on device
-        var allListeners: String = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
+        val allListeners: String = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
 
         //Return true if this package is contained in the list of listeners
         return allListeners.contains(packageName)
@@ -117,8 +131,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     //Creates an alert that directs the user to the Notification Access settings
-    fun enableNotificationAccessAlert(): AlertDialog{
-        var alertDialogBuilder = AlertDialog.Builder(this)
+    private fun enableNotificationAccessAlert(): AlertDialog{
+        val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Notification Access")
         alertDialogBuilder.setMessage("App requires Notification Access to be turned on in the settings")
         alertDialogBuilder.setPositiveButton("Go to Settings"){dialog, which ->
