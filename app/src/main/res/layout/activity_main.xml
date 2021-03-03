@@ -38,8 +38,8 @@
             android:textAlignment="center"
             android:textSize="18sp" />
 
-        <CheckBox
-            android:id="@+id/enabledCheckBox"
+        <Switch
+            android:id="@+id/enabledSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -125,11 +125,12 @@
             android:textAlignment="center"
             android:textSize="18sp" />
 
-        <CheckBox
-            android:id="@+id/maxWordsCheckBox"
+        <Switch
+            android:id="@+id/maxWordsSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
+
 
     </LinearLayout>
 
@@ -153,8 +154,8 @@
             android:textAlignment="center"
             android:textSize="18sp" />
 
-        <CheckBox
-            android:id="@+id/vibrateTitleCheckBox"
+        <Switch
+            android:id="@+id/vibrateTitleSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -179,8 +180,8 @@
             android:textAlignment="center"
             android:textSize="18sp" />
 
-        <CheckBox
-            android:id="@+id/vibrateAppNameCheckBox"
+        <Switch
+            android:id="@+id/vibrateAppNameSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
