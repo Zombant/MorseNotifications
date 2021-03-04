@@ -36,6 +36,14 @@ class PackageListDialogFragment: DialogFragment() {
 
         rootView.recyclerView.setHasFixedSize(true)
 
+        //On Save or Cancel Button pressed
+        rootView.packagesSaveButton.setOnClickListener {
+            //TODO: Save packages in a string in shared preferences
+        }
+        rootView.packagesCancelButton.setOnClickListener {
+            //TODO: Go back to main screen
+        }
+
         return rootView
 
     }
