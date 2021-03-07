@@ -10,6 +10,7 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import android.widget.Toast
+import com.google.gson.Gson
 
 //NotificationListenerService turns on automatically if
 class MainService() : NotificationListenerService() {
@@ -47,27 +48,34 @@ class MainService() : NotificationListenerService() {
                 vibrator = applicationContext.getSystemService(VIBRATOR_SERVICE) as Vibrator
             }
 
-            //Debugging stuff
-            //println(sbn?.notification?.extras?.getString("android.title"))
-            //println(sbn?.notification?.extras?.getString("android.text"))
-            //println(sbn?.packageName)
-            //println(Telephony.Sms.getDefaultSmsPackage(applicationContext))
-            //for (key in sbn?.notification?.extras?.keySet()!!) {
-            //    Log.d("myApplication", "$key is a key in the bundle")
-            //}
+            //Load the packages from the SharedPreferences and convert to loadedArray, ArrayList<String>
+            var gson: Gson = Gson()
+            var json = getSharedPreferences("morseNotify", 0)?.getString("packages",null)
+            var loadedArray: ArrayList<String>
+            if(json != null) {
+                loadedArray = gson.fromJson(json, ArrayList<String>()::class.java)
+            } else {
+                loadedArray = ArrayList<String>()
+            }
 
-            //Only run if the notification came from the default SMS app
-            if (sbn?.packageName == Telephony.Sms.getDefaultSmsPackage(applicationContext)) {
+            //To get deault sms app
+            //Telephony.Sms.getDefaultSmsPackage(applicationContext)
 
-                //TODO: Vibrate App Name
+            //Test if the notification came from an app that is in the loadedArray
+            for (i in loadedArray) {
+                if (sbn?.packageName.equals(i)) {
 
-                //Vibrate Notification Title: //TODO: will always vibrate entire title
-                if(getSharedPreferences("morseNotify", 0).getBoolean("vibrateTitle", false)) {
-                    vibrateMessage(sbn?.notification?.extras?.getString("android.title"), getSharedPreferences("morseNotify", 0).getInt("speed", -1), -1)
-                    Thread.sleep(300)
+                    //TODO: Vibrate App Name
+
+                    //Vibrate Notification Title //TODO: will always vibrate entire title
+                    if (getSharedPreferences("morseNotify", 0).getBoolean("vibrateTitle", false)) {
+                        vibrateMessage(sbn?.notification?.extras?.getString("android.title"), getSharedPreferences("morseNotify", 0).getInt("speed", -1), -1)
+                        Thread.sleep(300)
+                    }
+                    //Vibrate the message in the text field of the notification
+                    vibrateMessage(sbn?.notification?.extras?.getString("android.text"), getSharedPreferences("morseNotify", 0).getInt("speed", -1), getSharedPreferences("morseNotify", 0).getInt("maxWords", -1)
+                    )
                 }
-                //Vibrate the message in the text field of the notification
-                vibrateMessage(sbn?.notification?.extras?.getString("android.text"), getSharedPreferences("morseNotify", 0).getInt("speed", -1), getSharedPreferences("morseNotify", 0).getInt("maxWords", -1))
             }
         }
 

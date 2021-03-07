@@ -7,10 +7,10 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/packagesBackButton"
+        android:id="@+id/packagesSaveButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Back"
+        android:text="Save"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:clipToPadding="false"
         tools:listitem="@layout/packages_list_row"
-        app:layout_constraintBottom_toTopOf="@id/packagesBackButton"/>
+        app:layout_constraintBottom_toTopOf="@id/packagesSaveButton"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

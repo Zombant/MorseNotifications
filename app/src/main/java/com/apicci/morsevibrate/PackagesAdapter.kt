@@ -37,39 +37,44 @@ class PackagesAdapter(private val data: List<PackageEntry>, private val context:
         holder.imageView.setImageDrawable(context?.packageManager?.getApplicationIcon(currentItem.appPackage))
         holder.textView.text = currentItem.appName
 
-        var gson: Gson = Gson()
-        var json = context?.getSharedPreferences("morseNotify", 0)?.getString("packages",null)
-        var loadedArray: ArrayList<String>
+        //Load the packages from the SharedPreferences and convert to loadedArray, ArrayList<String>
+        val gson: Gson = Gson()
+        val json = context?.getSharedPreferences("morseNotify", 0)?.getString("packages",null)
+        val loadedArray: ArrayList<String>
         if(json != null) {
             loadedArray = gson.fromJson(json, ArrayList<String>()::class.java)
         } else {
             loadedArray = ArrayList<String>()
         }
+        //Set the checkbox if the loaded array already contains that checkbox's package
         holder.checkBox.isChecked = loadedArray.contains(currentItem.appPackage)
 
-        holder.checkBox.setOnClickListener { it ->
-            //Load stored json into loadedArray
-            var gson: Gson = Gson()
-            var json = context?.getSharedPreferences("morseNotify", 0)?.getString("packages",null)
-            var loadedArray: ArrayList<String>
+        holder.checkBox.setOnClickListener {
+
+            //Load the packages from the SharedPreferences and convert to loadedArray, ArrayList<String>
+            val gson: Gson = Gson()
+            val json = context?.getSharedPreferences("morseNotify", 0)?.getString("packages",null)
+            val loadedArray: ArrayList<String>
             if(json != null) {
                 loadedArray = gson.fromJson(json, ArrayList<String>()::class.java)
             } else {
                 loadedArray = ArrayList<String>()
             }
 
-            //Add this item's package to loadedArray if it is checked
+            //If the checkbox is changed to checked, add it to the loadedArray
             if(holder.checkBox.isChecked) {
                 loadedArray.add(currentItem.appPackage)
                 currentItem.checked = true
                 holder.setIsRecyclable(false)
             }
 
+            //If the checkbox is unchecked, remove it from loadedArray
             if(!holder.checkBox.isChecked) {
                 loadedArray.remove(currentItem.appPackage)
                 currentItem.checked = false
             }
 
+            //Save changed loadedArray
             val editor = context?.getSharedPreferences("morseNotify", 0)?.edit()
             editor?.putString("packages", gson.toJson(loadedArray))
             editor?.apply()

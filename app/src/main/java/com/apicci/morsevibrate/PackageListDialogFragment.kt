@@ -31,7 +31,7 @@ class PackageListDialogFragment: DialogFragment() {
         rootView.recyclerView.setHasFixedSize(true)
 
         //On Back button pressed
-        rootView.packagesBackButton.setOnClickListener {
+        rootView.packagesSaveButton.setOnClickListener {
             dismiss()
         }
 
