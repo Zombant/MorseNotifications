@@ -6,30 +6,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/buttonHolder"
+    <Button
+        android:id="@+id/packagesBackButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:gravity="center">
-
-        <Button
-            android:id="@+id/packagesSaveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save"
-            android:layout_gravity="center"
-            android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/packagesCancelButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cancel"
-            android:layout_gravity="center"
-            android:layout_weight="1"/>
-    </LinearLayout>
+        android:text="Back"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -38,7 +20,7 @@
         android:layout_height="wrap_content"
         android:clipToPadding="false"
         tools:listitem="@layout/packages_list_row"
-        app:layout_constraintBottom_toTopOf="@id/buttonHolder"/>
+        app:layout_constraintBottom_toTopOf="@id/packagesBackButton"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

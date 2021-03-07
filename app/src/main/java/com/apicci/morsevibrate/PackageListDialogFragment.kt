@@ -1,18 +1,12 @@
 package com.apicci.morsevibrate
 
-import android.content.pm.ApplicationInfo
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.package_list_fragment.view.*
-import kotlin.reflect.typeOf
 
 //DialogFragment where the user can select apps
 class PackageListDialogFragment: DialogFragment() {
@@ -36,13 +30,11 @@ class PackageListDialogFragment: DialogFragment() {
 
         rootView.recyclerView.setHasFixedSize(true)
 
-        //On Save or Cancel Button pressed
-        rootView.packagesSaveButton.setOnClickListener {
-            //TODO: Save packages in a string in shared preferences
+        //On Back button pressed
+        rootView.packagesBackButton.setOnClickListener {
+            dismiss()
         }
-        rootView.packagesCancelButton.setOnClickListener {
-            //TODO: Go back to main screen
-        }
+
 
         return rootView
 
