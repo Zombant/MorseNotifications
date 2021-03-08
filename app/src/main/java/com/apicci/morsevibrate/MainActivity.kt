@@ -90,20 +90,20 @@ class MainActivity : AppCompatActivity() {
         //Select apps button
         chooseAppsButton.setOnClickListener {
             //Create an instance of the fragment dialog
-            val dialog = PackageListDialogFragment()
 
             //Create an empty bundle
             val bundle = Bundle()
 
-            //Put the package data into the bundle
+            //Get installed apps
             val data = getInstalledApps()
+
+            //Put data in the bundle
             bundle.putSerializable("data", data)
 
-            //Put the bundle into the fragment arguments
-            dialog.arguments = bundle
-
-            //Show DialogFragment
-            dialog.show(supportFragmentManager, "PackageDialog")
+            //Start activity and give it the bundle
+            val intent = Intent(this, PackageSelectActivity::class.java)
+            intent.putExtra("packageExtra", bundle)
+            startActivity(intent)
 
 
         }
