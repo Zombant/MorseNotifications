@@ -2,6 +2,7 @@ package com.apicci.morsevibrate
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_package_select.*
 
 class PackageSelectActivity : AppCompatActivity() {
@@ -31,8 +32,13 @@ class PackageSelectActivity : AppCompatActivity() {
             finish()
         }
 
+    }
 
+    override fun onStop() {
+        super.onStop()
 
+        //Toast to tell the user that the app selection was saved (only so they know the app selection is saved automatically, not with the button)
+        Toast.makeText(applicationContext, "App Selection Saved", Toast.LENGTH_LONG).show()
     }
 
 }

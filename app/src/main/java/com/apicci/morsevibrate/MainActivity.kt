@@ -89,23 +89,15 @@ class MainActivity : AppCompatActivity() {
 
         //Select apps button
         chooseAppsButton.setOnClickListener {
-            //Create an instance of the fragment dialog
 
-            //Create an empty bundle
-            val bundle = Bundle()
-
-            //Get installed apps
-            val data = getInstalledApps()
-
-            //Put data in the bundle
-            bundle.putSerializable("data", data)
-
-            //Start activity and give it the bundle
-            val intent = Intent(this, PackageSelectActivity::class.java)
-            intent.putExtra("packageExtra", bundle)
-            startActivity(intent)
-
-
+            //Alert the user to enable Notification Access if it is not already, otherwise continue as normal
+            if(!getNotificationsEnabled()){
+                //Show alert dialog that directs user to settings
+                val alertDialog = enableNotificationAccessAlert()
+                alertDialog.show()
+            } else {
+                openAppSelectActivity()
+            }
         }
 
     }
@@ -189,7 +181,26 @@ class MainActivity : AppCompatActivity() {
             editor.putBoolean("vibrateAppName", vibrateAppNameSwitch.isChecked)
 
             editor.apply()
+
+            //Toast
+            Toast.makeText(applicationContext, "Settings Saved.", Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun openAppSelectActivity(){
+        //Create an empty bundle
+        val bundle = Bundle()
+
+        //Get installed apps
+        val data = getInstalledApps()
+
+        //Put data in the bundle
+        bundle.putSerializable("data", data)
+
+        //Start activity and give it the bundle
+        val intent = Intent(this, PackageSelectActivity::class.java)
+        intent.putExtra("packageExtra", bundle)
+        startActivity(intent)
     }
 
 }
