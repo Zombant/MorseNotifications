@@ -33,10 +33,6 @@ class PackageSelectActivity : AppCompatActivity(), SearchView.OnQueryTextListene
             commit()
         }
 
-        backButton.setOnClickListener {
-            finish()
-        }
-
     }
 
     override fun onStop() {

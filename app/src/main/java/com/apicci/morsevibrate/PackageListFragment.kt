@@ -23,6 +23,7 @@ class PackageListFragment: Fragment() {
 
         // Set the Adapter of the RecyclerView that is in the root view (R.layout.package_list_fragment)
         // to the custom Adapter and pass in the data, a copy of the data, and application context
+        //TODO: Put already checked packages first
         rootView.recyclerView.adapter = PackagesAdapter(data, ArrayList(data), activity?.applicationContext)
 
         //Set the layout manager of the RecyclerView to a LinearLayoutManager
