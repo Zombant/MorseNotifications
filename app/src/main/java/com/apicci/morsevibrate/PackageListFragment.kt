@@ -22,13 +22,13 @@ class PackageListFragment: Fragment() {
         val data = arguments!!.getSerializable("data") as ArrayList<PackageEntry>
 
         // Set the Adapter of the RecyclerView that is in the root view (R.layout.package_list_fragment)
-        // to the custom Adapter and pass in the data and application context
-        rootView.recyclerView.adapter = PackagesAdapter(data, activity?.applicationContext)
+        // to the custom Adapter and pass in the data, a copy of the data, and application context
+        rootView.recyclerView.adapter = PackagesAdapter(data, ArrayList(data), activity?.applicationContext)
 
         //Set the layout manager of the RecyclerView to a LinearLayoutManager
         rootView.recyclerView.layoutManager = LinearLayoutManager(activity?.applicationContext)
 
-
+        //Allow the recyclerview to change size
         rootView.recyclerView.setHasFixedSize(false)
 
 

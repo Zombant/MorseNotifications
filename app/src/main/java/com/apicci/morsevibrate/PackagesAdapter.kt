@@ -1,23 +1,16 @@
 package com.apicci.morsevibrate
 
 import android.content.Context
-import android.content.SharedPreferences
-import android.os.Debug
-import android.preference.PreferenceManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.packages_list_row.view.*
 
-class PackagesAdapter(private val data: List<PackageEntry>, private val context: Context?) : RecyclerView.Adapter<PackagesAdapter.PackagesViewHolder>(){
+class PackagesAdapter(private val data: ArrayList<PackageEntry>, private val dataFiltered: ArrayList<PackageEntry>, private val context: Context?) : RecyclerView.Adapter<PackagesAdapter.PackagesViewHolder>(), Filterable{
 
     // Called by recycle view when its time to create a new view holder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PackagesViewHolder {
@@ -30,7 +23,7 @@ class PackagesAdapter(private val data: List<PackageEntry>, private val context:
     // Populates view holders with data
     override fun onBindViewHolder(holder: PackagesViewHolder, position: Int) {
         //Get the corresponding item from data
-        val currentItem = data[position]
+        val currentItem = dataFiltered[position]
 
 
         //Populate respective view holder with the data
@@ -86,7 +79,7 @@ class PackagesAdapter(private val data: List<PackageEntry>, private val context:
     }
 
     override fun getItemCount(): Int {
-        return data.size
+        return dataFiltered.size
     }
 
 
@@ -94,6 +87,53 @@ class PackagesAdapter(private val data: List<PackageEntry>, private val context:
         val imageView: ImageView = rowInstance.packageIconImageView
         val textView: TextView = rowInstance.packageNameTextView
         val checkBox: CheckBox = rowInstance.packageCheckBox
+    }
+
+    //Override method that returns an anonymous filter object
+    override fun getFilter(): Filter {
+        return object : Filter(){
+
+            //Accepts the text from the search bar from PackageSelectActivity and returns an updated list of packages
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+
+                //Empty arraylist to store the filtered packages
+                val filteredPackages: ArrayList<PackageEntry> = ArrayList()
+
+                //If the search bar is null or empty, don't filter (copy all of data to filteredList)
+                if(constraint == null || constraint.isEmpty()){
+                    filteredPackages.addAll(data)
+                } else {
+                    //Create the filter from the search
+                    val filterSearch: String = constraint.toString().toLowerCase().trim()
+
+                    //For each package in the unfiltered list of packages
+                    for(item in data){
+                        //If the package name contains the search query, add it to the list of filtered packages
+                        if(item.appName.toLowerCase().contains(filterSearch)){
+                            filteredPackages.add(item)
+                        }
+                    }
+                }
+                //Create a FilterResults and give it the list of filtered packages
+                val results = FilterResults()
+                results.values = filteredPackages
+
+                //Results get sent to below publishResults method as 'results'
+                return results
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                //Clear everything from dataFiltered
+                dataFiltered.clear()
+
+                //Add the results from the performFiltering method to the dataFiltered
+                dataFiltered.addAll(results?.values as ArrayList<PackageEntry>)
+
+                //Update recyclerview
+                notifyDataSetChanged()
+            }
+
+        }
     }
 
 }
