@@ -2,6 +2,7 @@ package com.apicci.morsevibrate
 
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
@@ -11,6 +12,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.Exception
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -130,19 +132,17 @@ class MainActivity : AppCompatActivity() {
     //Returns an ArrayList of installed packages
     private fun getInstalledApps(): ArrayList<PackageEntry> {
         //Create empty list
-        val data = ArrayList<PackageEntry>()
-
-        //Get a list of all packages
-        val packages = packageManager.getInstalledPackages(0)
-        for (currentPackage in packages.indices) {
-            //If the current package is a system package
-            if (packages[currentPackage]!!.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
-                val appName = packages[currentPackage].applicationInfo.loadLabel(packageManager).toString()
-                val appPackage = packages[currentPackage].applicationInfo.packageName
-                val checked = false //TODO: Only checked if it is checked in the sharedPreferences
-                val item = PackageEntry(appName, appPackage, checked)
-                data.add(item)
+        val data: ArrayList<PackageEntry> = ArrayList<PackageEntry>()
+        for(info in packageManager.getInstalledApplications(PackageManager.GET_META_DATA)){
+            try {
+                if(packageManager.getLaunchIntentForPackage(info.packageName) != null){
+                    val item = PackageEntry(info.loadLabel(packageManager).toString(), info.packageName, false)
+                    data.add(item)
+                }
+            } catch (e: Exception){
+                e.printStackTrace()
             }
+
         }
 
         //Return a list of packages, sorted by app names
