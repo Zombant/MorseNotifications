@@ -1,10 +1,13 @@
 package com.apicci.morsevibrate
 
+import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.os.IBinder
-import android.os.VibrationEffect
-import android.os.Vibrator
+import android.media.AudioManager
+import android.media.RingtoneManager
+import android.media.ToneGenerator
+import android.os.*
+import android.provider.MediaStore
+import android.provider.Settings
 import android.provider.Telephony
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
@@ -48,6 +51,17 @@ class MainService() : NotificationListenerService() {
                 vibrator = applicationContext.getSystemService(VIBRATOR_SERVICE) as Vibrator
             }
 
+            //Get audio manager service
+            val audiomanager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+            //Tone generator
+            val toneGen: ToneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+
+            //Whether vibration and/or sound should be used
+            val shouldVibrate: Boolean = getSharedPreferences("morseNotify", 0).getBoolean("shouldVibrate", false)
+            val shouldSound: Boolean = getSharedPreferences("morseNotify", 0).getBoolean("shouldSound", false)
+            Log.d("--------------", shouldVibrate.toString() + shouldSound.toString())
+
             //Load the packages from the SharedPreferences and convert to loadedArray, ArrayList<String>
             var gson: Gson = Gson()
             var json = getSharedPreferences("morseNotify", 0)?.getString("packages",null)
@@ -61,22 +75,32 @@ class MainService() : NotificationListenerService() {
             //To get deault sms app
             //Telephony.Sms.getDefaultSmsPackage(applicationContext)
 
+
             //Test if the notification came from an app that is in the loadedArray
             for (i in loadedArray) {
                 if (sbn?.packageName.equals(i)) {
 
+                    //Save volume and set to max
+                    val currentVolume = audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                    audiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, audiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0)
+
                     //TODO: Vibrate App Name
 
-                    //Vibrate Notification Title //TODO: will always vibrate entire title
+                    //Vibrate Notification Title
                     if (getSharedPreferences("morseNotify", 0).getBoolean("vibrateTitle", false)) {
-                        vibrateMessage(sbn?.notification?.extras?.getString("android.title"), getSharedPreferences("morseNotify", 0).getInt("speed", -1), -1)
+                        vibrateMessage(sbn?.notification?.extras?.getString("android.title"), getSharedPreferences("morseNotify", 0).getInt("speed", -1), -1, shouldVibrate, shouldSound, toneGen)
                         Thread.sleep(300)
                     }
                     //Vibrate the message in the text field of the notification
-                    vibrateMessage(sbn?.notification?.extras?.getString("android.text"), getSharedPreferences("morseNotify", 0).getInt("speed", -1), getSharedPreferences("morseNotify", 0).getInt("maxWords", -1)
-                    )
+                    vibrateMessage(sbn?.notification?.extras?.getString("android.text"), getSharedPreferences("morseNotify", 0).getInt("speed", -1), getSharedPreferences("morseNotify", 0).getInt("maxWords", -1), shouldVibrate, shouldSound, toneGen)
+
+                    //Set volume back to previous
+                    audiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0)
                 }
             }
+
+
+
         }
 
     }
@@ -87,19 +111,24 @@ class MainService() : NotificationListenerService() {
     }
 
     //Vibrate a dot
-    private fun vibrateDot(multiplier: Int){
+    private fun vibrateDot(multiplier: Int, shouldVibrate: Boolean, shouldSound: Boolean, toneGen: ToneGenerator){
         if(Build.VERSION.SDK_INT >= 26) {
-            vibrator?.vibrate(VibrationEffect.createOneShot(multiplier.toLong() * 1, VibrationEffect.DEFAULT_AMPLITUDE))
+            if (shouldVibrate) vibrator?.vibrate(VibrationEffect.createOneShot(multiplier.toLong() * 1, VibrationEffect.DEFAULT_AMPLITUDE))
+            if (shouldSound) toneGen.startTone(ToneGenerator.TONE_CDMA_ONE_MIN_BEEP, (multiplier.toLong() * 1).toInt());
+
+
             //TODO: or try SystemClock.sleep(mills)
-            Thread.sleep(100)
+            Thread.sleep(multiplier.toLong() * 1)
         }
     }
     //Vibrate a dash
-    private fun vibrateDash(multiplier: Int){
+    private fun vibrateDash(multiplier: Int, shouldVibrate: Boolean, shouldSound: Boolean, toneGen: ToneGenerator){
         if(Build.VERSION.SDK_INT >= 26) {
-            vibrator?.vibrate(VibrationEffect.createOneShot(multiplier.toLong() * 3, VibrationEffect.DEFAULT_AMPLITUDE))
+            if (shouldVibrate) vibrator?.vibrate(VibrationEffect.createOneShot(multiplier.toLong() * 3, VibrationEffect.DEFAULT_AMPLITUDE))
+            if (shouldSound) toneGen.startTone(ToneGenerator.TONE_CDMA_ONE_MIN_BEEP, (multiplier.toLong() * 3).toInt())
             Thread.sleep(multiplier.toLong() * 3)
         }
+
     }
 
     //Wait between vibrations
@@ -120,7 +149,7 @@ class MainService() : NotificationListenerService() {
     }
 
     //Vibrates depending on the message given
-    private fun vibrateMessage(message: String?, multiplier: Int, maxWords: Int){
+    private fun vibrateMessage(message: String?, multiplier: Int, maxWords: Int, shouldVibrate: Boolean, shouldSound: Boolean, toneGen: ToneGenerator){
 
         if(multiplier == -1){return}
 
@@ -140,11 +169,11 @@ class MainService() : NotificationListenerService() {
         for(symbol in vibrationCode.indices){
             println()
             if(vibrationCode[symbol] == '.'){
-                vibrateDot(multiplier)
+                vibrateDot(multiplier, shouldVibrate, shouldSound, toneGen)
                 spaceBetweenSymbols(multiplier)
             }
             if(vibrationCode[symbol] == '-'){
-                vibrateDash(multiplier)
+                vibrateDash(multiplier, shouldVibrate, shouldSound, toneGen)
                 spaceBetweenSymbols(multiplier)
             }
             if(vibrationCode[symbol] == 'l'){

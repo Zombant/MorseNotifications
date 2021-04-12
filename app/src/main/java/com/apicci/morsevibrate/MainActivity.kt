@@ -1,8 +1,11 @@
 package com.apicci.morsevibrate
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.media.AudioManager
+import android.media.ToneGenerator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
@@ -48,9 +51,7 @@ class MainActivity : AppCompatActivity() {
         if(!getNotificationsEnabled()){
             val alert = enableNotificationAccessAlert()
             alert.show()
-            Log.d("-----------------", "SHOWALERT")
         }
-        Log.d("-----------------", "RESUMED")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +62,8 @@ class MainActivity : AppCompatActivity() {
         maxWordsEditText.setText(getSharedPreferences("morseNotify", 0).getInt("maxWords", 100).toString())
         if(getSharedPreferences("morseNotify", 0).getInt("maxWords", 100) == -1) maxWordsEditText.setText("")
         enabledSwitch.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("enabled", false)
+        shouldVibrateSwitch.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("shouldVibrate", false)
+        shouldSoundSwitch.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("shouldSound", false)
         vibrateTitleSwitch.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("vibrateTitle", false)
         vibrateAppNameSwitch.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("vibrateAppName", false)
         maxWordsSwitch.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("maxWordsChecked", false)
@@ -77,7 +80,6 @@ class MainActivity : AppCompatActivity() {
 
         //When the save button is pressed
         saveSpeedButton.setOnClickListener {
-
             //Alert the user to enable Notification Access if it is not already, otherwise continue as normal
             if(!getNotificationsEnabled()){
                 //Show alert dialog that directs user to settings
@@ -91,7 +93,6 @@ class MainActivity : AppCompatActivity() {
 
         //Select apps button
         chooseAppsButton.setOnClickListener {
-
             //Alert the user to enable Notification Access if it is not already, otherwise continue as normal
             if(!getNotificationsEnabled()){
                 //Show alert dialog that directs user to settings
@@ -166,7 +167,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, "Invalid Value: Please enter a value $MIN_NUMOFWORDS-$MAX_NUMOFWORDS", Toast.LENGTH_LONG).show()
 
         } else {
-            //Save speed in SharedPreferences
+            //Save in SharedPreferences
             editor.putBoolean("enabled", enabledSwitch.isChecked)
             editor.putInt("speed", speedEditText.text.toString().toInt())
             editor.putBoolean("maxWordsChecked", maxWordsSwitch.isChecked)
@@ -180,11 +181,14 @@ class MainActivity : AppCompatActivity() {
             editor.putBoolean("vibrateTitle", vibrateTitleSwitch.isChecked)
             editor.putBoolean("vibrateAppName", vibrateAppNameSwitch.isChecked)
 
+            editor.putBoolean("shouldVibrate", shouldVibrateSwitch.isChecked)
+            editor.putBoolean("shouldSound", shouldSoundSwitch.isChecked)
+
             editor.apply()
 
             //Toast
             Toast.makeText(applicationContext, "Settings Saved.", Toast.LENGTH_LONG).show()
-        }
+       }
     }
 
     private fun openAppSelectActivity(){
