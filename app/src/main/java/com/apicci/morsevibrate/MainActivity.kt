@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         //Setup
         speedEditText.setText(getSharedPreferences("morseNotify", 0).getInt("speed", 150).toString())
         maxWordsEditText.setText(getSharedPreferences("morseNotify", 0).getInt("maxWords", 100).toString())
+        volumeEditText.setText(getSharedPreferences("morseNotify", 0).getInt("volume", 50).toString())
         if(getSharedPreferences("morseNotify", 0).getInt("maxWords", 100) == -1) maxWordsEditText.setText("")
         enabledSwitch.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("enabled", false)
         shouldVibrateSwitch.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("shouldVibrate", false)
@@ -69,13 +70,19 @@ class MainActivity : AppCompatActivity() {
         maxWordsSwitch.isChecked = getSharedPreferences("morseNotify", 0).getBoolean("maxWordsChecked", false)
         maxWordsEditText.isEnabled = maxWordsSwitch.isChecked
         maxWordsTextView.isEnabled = maxWordsSwitch.isChecked
+        volumeEditText.isEnabled = getSharedPreferences("morseNotify", 0).getBoolean("shouldSound", false)
+        volumeTextView.isEnabled = getSharedPreferences("morseNotify", 0).getBoolean("shouldSound", false)
 
-        //TODO: Option to play sound and flash light in addition to vibration
+        //TODO: Option to flash light in addition to vibration and sound
 
         //When the maxWords checkbox is toggled
         maxWordsSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             maxWordsEditText.isEnabled = isChecked
             maxWordsTextView.isEnabled = maxWordsSwitch.isChecked
+        }
+        shouldSoundSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            volumeEditText.isEnabled = isChecked
+            volumeTextView.isEnabled = shouldSoundSwitch.isChecked
         }
 
         //When the save button is pressed
@@ -166,6 +173,9 @@ class MainActivity : AppCompatActivity() {
         } else if(maxWordsSwitch.isChecked && (maxWordsEditText.text.toString().toInt() > MAX_NUMOFWORDS || maxWordsEditText.text.toString().toInt() < MIN_NUMOFWORDS)) {
             Toast.makeText(applicationContext, "Invalid Value: Please enter a value $MIN_NUMOFWORDS-$MAX_NUMOFWORDS", Toast.LENGTH_LONG).show()
 
+        } else if(shouldSoundSwitch.isChecked && (volumeEditText.text.toString().toInt() > 100 || volumeEditText.text.toString().toInt() < 0)) {
+            Toast.makeText(applicationContext, "Invalid Volume: Please enter a value 0 - 100", Toast.LENGTH_LONG).show()
+
         } else {
             //Save in SharedPreferences
             editor.putBoolean("enabled", enabledSwitch.isChecked)
@@ -183,6 +193,10 @@ class MainActivity : AppCompatActivity() {
 
             editor.putBoolean("shouldVibrate", shouldVibrateSwitch.isChecked)
             editor.putBoolean("shouldSound", shouldSoundSwitch.isChecked)
+
+            if(shouldSoundSwitch.isChecked) {
+                editor.putInt("volume", volumeEditText.text.toString().toInt())
+            }
 
             editor.apply()
 
